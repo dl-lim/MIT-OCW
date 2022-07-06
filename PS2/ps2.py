@@ -7,6 +7,7 @@
 #
 # Finding shortest paths through MIT buildings
 #
+from turtle import distance
 import unittest
 from graph import Digraph, Node, WeightedEdge
 
@@ -20,8 +21,9 @@ from graph import Digraph, Node, WeightedEdge
 # represented?
 #
 # Answer:
-#
-
+# Each Node is a building. 
+# Each Edge represent the distance between two of the buildings.
+# Each Edge has a weightage of total distance and outdoor distance
 
 # Problem 2b: Implementing load_map
 def load_map(map_filename):
@@ -43,15 +45,39 @@ def load_map(map_filename):
         a Digraph representing the map
     """
     print("Loading map from file...")
+    g = Digraph()
     with open(map_filename) as f:
         for line in f:
             src, dest, total_dist, outdoor_dist = line.strip().split(' ')
-            
-
+            src, dest = Node(src), Node(dest)
+            if not g.has_node(src):
+                g.add_node(src)
+            if not g.has_node(dest):
+                g.add_node(dest)
+            g.add_edge(WeightedEdge(src,dest,total_dist,outdoor_dist))
     print("Map loaded successfully.")
+    return g
 
 # Problem 2c: Testing load_map
 # Include the lines used to test load_map below, but comment them out
+
+
+# filename = 'PS2/test_load_map.txt'
+# if __name__ == '__main__':
+#     g = load_map(filename)
+#     print('Actual Results :')
+#     print(str(g))
+
+#     expected = """
+# 1->2 (30, 0)
+# 2->5 (80, 50)
+# 3->2 (80, 50)
+# 2->4 (110, 80)
+# 5->3 (34, 0)
+# 4->1 (35, 30)
+# """
+#     print('Expected Results :' + expected)
+#     print('Please do an eyeball test :P')
 
 
 #
@@ -144,7 +170,7 @@ class Ps2Test(unittest.TestCase):
     LARGE_DIST = 99999
 
     def setUp(self):
-        self.graph = load_map("mit_map.txt")
+        self.graph = load_map("PS2/mit_map.txt")
 
     def test_load_map_basic(self):
         self.assertTrue(isinstance(self.graph, Digraph))
