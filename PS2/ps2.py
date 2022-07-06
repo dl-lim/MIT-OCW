@@ -42,9 +42,13 @@ def load_map(map_filename):
     Returns:
         a Digraph representing the map
     """
-
-    # TODO
     print("Loading map from file...")
+    with open(map_filename) as f:
+        for line in f:
+            src, dest, total_dist, outdoor_dist = line.strip().split(' ')
+            
+
+    print("Map loaded successfully.")
 
 # Problem 2c: Testing load_map
 # Include the lines used to test load_map below, but comment them out
