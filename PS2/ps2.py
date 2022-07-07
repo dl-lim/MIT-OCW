@@ -10,6 +10,8 @@
 import unittest
 from graph import Digraph, Node, WeightedEdge
 
+silent = True
+
 #
 # Problem 2: Building up the Campus Map
 #
@@ -43,7 +45,7 @@ def load_map(map_filename):
     Returns:
         a Digraph representing the map
     """
-    print('Loading map from ' + '"' + map_filename + '"')
+    if not silent: print('Loading map from ' + '"' + map_filename + '"')
     g = Digraph()
     with open(map_filename) as f:
         for line in f:
@@ -54,7 +56,7 @@ def load_map(map_filename):
             if not g.has_node(dest):
                 g.add_node(dest)
             g.add_edge(WeightedEdge(src,dest,int(total_dist),int(outdoor_dist)))
-    print("Map loaded successfully.")
+    if not silent: print("Map loaded successfully.")
     return g
 
 # Problem 2c: Testing load_map
@@ -153,11 +155,11 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
 
     currPath, currDist, currOutd = path
     currPath = currPath + [start] ##### I messed up big time with this with currPath += [start] ; += works weirdly with lists!!!
-    print('Current DFS path: ' + str(currPath))
+    if not silent: print('Current DFS path: ' + str(currPath))
     
     if start == end: # elif start and end are the same node
         # update the global variables appropriately
-        print('Path found ' + str(currPath))
+        if not silent: print('Path found: ' + str(currPath))
         if currDist <= best_dist:
             best_path = currPath
             best_dist = currDist
@@ -169,12 +171,12 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
         for edge in digraph.get_edges_for_node(Node(start)): # for all the child nodes of start
             
             if str(edge.get_destination()) not in currPath:
-                currDist = currDist + int(edge.get_total_distance())
-                currOutd = currOutd + int(edge.get_outdoor_distance())
+                newDist = currDist + int(edge.get_total_distance())
+                newOutd = currOutd + int(edge.get_outdoor_distance())
                 
                 # recursively solve the rest of the path, from the child node to the end node
-                if currDist <= best_dist and currOutd <= max_dist_outdoors:
-                    newPath = get_best_path(digraph, str(edge.get_destination()), end, [currPath, currDist, currOutd], max_dist_outdoors - currOutd, best_dist, best_path)
+                if newDist <= best_dist and newOutd <= max_dist_outdoors:
+                    newPath = get_best_path(digraph, str(edge.get_destination()), end, [currPath, newDist, newOutd], max_dist_outdoors - newOutd, best_dist, best_path)
                     if newPath != None:
                         best_path, best_dist = newPath
                         # return the shortest path 
