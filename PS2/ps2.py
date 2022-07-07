@@ -7,7 +7,6 @@
 #
 # Finding shortest paths through MIT buildings
 #
-from turtle import distance
 import unittest
 from graph import Digraph, Node, WeightedEdge
 
@@ -44,7 +43,7 @@ def load_map(map_filename):
     Returns:
         a Digraph representing the map
     """
-    print("Loading map from file...")
+    print('Loading map from ' + '"' + map_filename + '"')
     g = Digraph()
     with open(map_filename) as f:
         for line in f:
@@ -54,13 +53,13 @@ def load_map(map_filename):
                 g.add_node(src)
             if not g.has_node(dest):
                 g.add_node(dest)
-            g.add_edge(WeightedEdge(src,dest,total_dist,outdoor_dist))
+            g.add_edge(WeightedEdge(src,dest,int(total_dist),int(outdoor_dist)))
     print("Map loaded successfully.")
     return g
 
 # Problem 2c: Testing load_map
 # Include the lines used to test load_map below, but comment them out
-
+#######################################################################
 
 # filename = 'PS2/test_load_map.txt'
 # if __name__ == '__main__':
@@ -79,7 +78,7 @@ def load_map(map_filename):
 #     print('Expected Results :' + expected)
 #     print('Please do an eyeball test :P')
 
-
+#######################################################################
 #
 # Problem 3: Finding the Shorest Path using Optimized Search Method
 #
@@ -89,6 +88,7 @@ def load_map(map_filename):
 #
 # Answer:
 #
+# To minimise total distance travelled such that it does not exceed the maximum distance outdoors
 
 # Problem 3b: Implement get_best_path
 def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
@@ -125,9 +125,61 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then return None.
     """
-    # TODO
-    pass
 
+# pseudocode
+
+# add to path[0], or currPath
+# if start or end invalid:
+#     return None
+# elif start == end:
+#     if currDist less than best_dist:
+#         return best_path and best_dist
+#     else
+#         return None
+# else:
+#     for edge in current node:
+#         if edge_destination not in currPath: # to remove loops
+#             update currDist, currPath
+#             if constrains: # max_dist_outdoors not exceeded, currDist still shorter than best_dist
+#                 recur
+#                 if recur_result != None:
+#                     best_path and best_dist is recur_result
+#         return best_path and best_dist # once every case is completed
+
+    
+    
+    if not digraph.has_node(Node(start)) and digraph.has_node(Node(end)): # if start and end are not valid nodes
+        raise ValueError('Node not found') # raise error
+
+    currPath, currDist, currOutd = path
+    currPath = currPath + [start] ##### I messed up big time with this with currPath += [start] ; += works weirdly with lists!!!
+    print('Current DFS path: ' + str(currPath))
+    
+    if start == end: # elif start and end are the same node
+        # update the global variables appropriately
+        print('Path found ' + str(currPath))
+        if currDist <= best_dist:
+            best_path = currPath
+            best_dist = currDist
+            return [best_path, best_dist] # returns list of path list and distance
+        else:
+            return None
+    else:
+        # construct a path including that node
+        for edge in digraph.get_edges_for_node(Node(start)): # for all the child nodes of start
+            
+            if str(edge.get_destination()) not in currPath:
+                currDist = currDist + int(edge.get_total_distance())
+                currOutd = currOutd + int(edge.get_outdoor_distance())
+                
+                # recursively solve the rest of the path, from the child node to the end node
+                if currDist <= best_dist and currOutd <= max_dist_outdoors:
+                    newPath = get_best_path(digraph, str(edge.get_destination()), end, [currPath, currDist, currOutd], max_dist_outdoors - currOutd, best_dist, best_path)
+                    if newPath != None:
+                        best_path, best_dist = newPath
+                        # return the shortest path 
+    
+    return (best_path, best_dist)
 
 # Problem 3c: Implement directed_dfs
 def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
@@ -158,9 +210,12 @@ def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then raises a ValueError.
     """
-    # TODO
-    pass
-
+    path = [[],0,0]
+    dfs_result = get_best_path(digraph, start, end, path, max_dist_outdoors, max_total_dist, None)
+    if dfs_result[0] != None and dfs_result[1] <= max_total_dist:
+        return dfs_result[0]
+    else:
+        raise ValueError('No path found')
 
 # ================================================================
 # Begin tests -- you do not need to modify anything below this line
