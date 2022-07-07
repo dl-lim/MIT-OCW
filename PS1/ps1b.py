@@ -1,6 +1,6 @@
 ###########################
 # 6.0002 Problem Set 1b: Space Change
-# Name:
+# Name: DL Lim
 # Collaborators:
 # Time:
 # Author: charz, cdenise
@@ -15,7 +15,7 @@ def dp_make_weight(egg_weights, target_weight, memo = {}):
     """
     Find number of eggs to bring back, using the smallest number of eggs. Assumes there is
     an infinite supply of eggs of each weight, and there is always a egg of value 1.
-    
+    s
     Parameters:
     egg_weights - tuple of integers, available egg weights sorted from smallest to largest value (1 = d1 < d2 < ... < dk)
     target_weight - int, amount of weight we want to find eggs to fit
