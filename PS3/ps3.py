@@ -6,6 +6,7 @@
 
 import math
 import random
+from turtle import pos
 
 import ps3_visualize
 import pylab
@@ -81,8 +82,17 @@ class RectangularRoom(object):
         height: an integer > 0
         dirt_amount: an integer >= 0
         """
-        raise NotImplementedError
-    
+        self.width = width
+        self.height = height
+
+        if width > 0 and height > 0 and dirt_amount >= 0:
+            self.tiles = {}
+            for m in range(int(width)): 
+                for n in range(int(height)):
+                    self.tiles[(m,n)] = int(dirt_amount)
+        else:
+            raise ValueError('Height, width and dirt amount must be non-negative integer')
+
     def clean_tile_at_position(self, pos, capacity):
         """
         Mark the tile under the position pos as cleaned by capacity amount of dirt.
@@ -96,7 +106,13 @@ class RectangularRoom(object):
         Note: The amount of dirt on each tile should be NON-NEGATIVE.
               If the capacity exceeds the amount of dirt on the tile, mark it as 0.
         """
-        raise NotImplementedError
+        x, y = int(pos.get_x()), int(pos.get_y())
+        if not self.is_tile_cleaned(self, x, y):
+            dirt_amount = self.get_dirt_amount(self, x, y)
+            if capacity >= dirt_amount:
+                self.tiles[(x,y)] = 0
+            else:
+                self.tiles[(x,y)] -= capacity
 
     def is_tile_cleaned(self, m, n):
         """
@@ -112,13 +128,17 @@ class RectangularRoom(object):
         Note: The tile is considered clean only when the amount of dirt on this
               tile is 0.
         """
-        raise NotImplementedError
+        return self.tiles[(m,n)] == 0
 
     def get_num_cleaned_tiles(self):
         """
         Returns: an integer; the total number of clean tiles in the room
         """
-        raise NotImplementedError
+        num_cleaned_tiles = 0
+        for tile in self.tiles:
+            if self.tiles.get(tile) == 0:
+                num_cleaned_tiles += 1
+        return num_cleaned_tiles
         
     def is_position_in_room(self, pos):
         """
@@ -127,7 +147,7 @@ class RectangularRoom(object):
         pos: a Position object.
         Returns: True if pos is in the room, False otherwise.
         """
-        raise NotImplementedError
+        return self.tiles[(int(pos.get_x()),int(pos.get_y()))] != None
         
     def get_dirt_amount(self, m, n):
         """
@@ -140,7 +160,7 @@ class RectangularRoom(object):
 
         Returns: an integer
         """
-        raise NotImplementedError
+        return self.tiles.get((m,n))
         
     def get_num_tiles(self):
         """
@@ -188,20 +208,27 @@ class Robot(object):
         capacity: a positive interger; the amount of dirt cleaned by the robot 
                   in a single time-step
         """
-        raise NotImplementedError
+        if speed > 0 and capacity >= 0:
+            self.room = room
+            self.speed = float(speed)
+            self.capacity = int(capacity)
+            self.x, self.y = random.random(0, self.room.width), random.random(0, self.room.height)
+            self.d = random.random(0,360)
+        else:
+            raise ValueError('Speed and capacity must be positive')
 
     def get_robot_position(self):
         """
         Returns: a Position object giving the robot's position in the room.
         """
-        raise NotImplementedError
+        return Position(self.x, self.y)
 
     def get_robot_direction(self):
         """
         Returns: a float d giving the direction of the robot as an angle in
         degrees, 0.0 <= d < 360.0.
         """
-        raise NotImplementedError
+        return self.d
 
     def set_robot_position(self, position):
         """
@@ -209,7 +236,7 @@ class Robot(object):
 
         position: a Position object.
         """
-        raise NotImplementedError
+        self.x, self.y = position.get_x(), position.get_y()
 
     def set_robot_direction(self, direction):
         """
@@ -217,7 +244,7 @@ class Robot(object):
 
         direction: float representing an angle in degrees
         """
-        raise NotImplementedError
+        self.d = direction
 
     def update_position_and_clean(self):
         """
