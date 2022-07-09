@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 # Problem Set 3: Simulating robots
-# Name:
+# Name: DL Lim
 # Collaborators (discussion):
 # Time:
 
 import math
 import random
-import re
-from turtle import pos
 
 import ps3_visualize
 import pylab
@@ -463,7 +461,7 @@ class FaultyRobot(Robot):
 #test_robot_movement(FaultyRobot, EmptyRoom)
 
 # === Problem 5
-animate = False
+animate = True
 delay = 0.1
 def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_coverage, num_trials,
                   robot_type):
@@ -501,13 +499,14 @@ def run_simulation(num_robots, speed, capacity, width, height, dirt_amount, min_
         time_step, fraction_cleaned = 0, 0
         room = EmptyRoom(width, height, dirt_amount)
         robot_list = [None] * num_robots
-       
+        if animate:
+            anim = ps3_visualize.RobotVisualization(num_robots, width, height, False, delay)
+        
         while fraction_cleaned < min_coverage:
-            for r in robot_list:
-                r = robot_type(room, speed, capacity)
-                r.update_position_and_clean()
+            for r in range(num_robots):
+                robot_list[r] = robot_type(room, speed, capacity)
+                robot_list[r].update_position_and_clean()
             if animate:
-                anim = ps3_visualize.RobotVisualization(num_robots, width, height, False, delay)
                 anim.update(room, robot_list)
             time_step += 1
             fraction_cleaned = room.get_num_cleaned_tiles() / room.get_num_tiles()
@@ -530,12 +529,14 @@ print ('avg time steps: ' + str(run_simulation(1, 1.0, 1, 5, 5, 3, 1.0, 50, Stan
 #
 # 1)How does the performance of the two robot types compare when cleaning 80%
 #       of a 20x20 room?
-#
+#   The FaultyRobot is approximately 15% less efficient than the StandardRobot.
+#   The performance graphs have a similar shape to them, like a negative exponential decay.
 #
 # 2) How does the performance of the two robot types compare when two of each
 #       robot cleans 80% of rooms with dimensions 
 #       10x30, 20x15, 25x12, and 50x6?
-#
+#   Once again, the FaultyRobot is 15% less efficient than the StandardRobot and takes more time.
+#   The performance graphs have a similar shape to each other.
 #
 
 def show_plot_compare_strategies(title, x_label, y_label):
