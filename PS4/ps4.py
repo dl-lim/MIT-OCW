@@ -1,5 +1,5 @@
 # Problem Set 4: Simulating the Spread of Disease and Bacteria Population Dynamics
-# Name:
+# Name: DL Lim
 # Collaborators (Discussion):
 # Time:
 
@@ -9,7 +9,7 @@ import pylab as pl
 import random
 
 random.seed(0)
-simulate = 2 # Set as 1, 2 or 3
+simulate = 3 # Set as 1, 2 or 3
 draw_graph = False
 
 ##########################
@@ -315,9 +315,8 @@ def calc_pop_std(populations, t):
     mean = calc_pop_avg(populations, t)
     deviations = []
     for i in range(pop_size):
-        deviations.append(populations[i][t] - mean)
-    stdev = ((sum(deviations) ** 2) / pop_size) ** 0.5
-    return stdev
+        deviations.append((populations[i][t] - mean) ** 2)
+    return math.sqrt(sum(deviations) / pop_size)
 
 def calc_95_ci(populations, t):
     """
@@ -342,7 +341,7 @@ def calc_95_ci(populations, t):
     """
     pop_size = len(populations)
     mean = calc_pop_avg(populations, t)
-    sem = calc_pop_std(populations, t) / (pop_size ** 2)
+    sem = calc_pop_std(populations, t) / math.sqrt(pop_size)
     width = 1.96 * sem
     return (mean, width)
 

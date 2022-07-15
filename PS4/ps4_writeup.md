@@ -26,11 +26,11 @@ In B, the death rate was higher than the growth rate, so the (resistant) populat
 
 
 ### Simulation #2
-The Total Population Standard Deviation is:  9.646648066153114e-14
-The Total Population's 95% Confidence Interval is:  (200.14, 7.56297208386404e-17)
+The Total Population Standard Deviation is:  26.905025552859083
+The Total Population's 95% Confidence Interval is:  (200.14, 7.457692598438206)
 
-The Resistant Population Standard Deviation is:  9.646648066153114e-14
-The Resistant Population's 95% Confidence Interval is:  (200.14, 7.56297208386404e-17)
+The Resistant Population Standard Deviation is:  26.905025552859083
+The Resistant Population's 95% Confidence Interval is:  (200.14, 7.457692598438206)
 
 At Step 299, both the resistant and total populations are the same, and share the same statistics for standard deviation and confidence interval.
 
